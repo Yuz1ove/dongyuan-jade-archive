@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+:root {
+  --ink: #06110d;
+  --forest: #0c2b22;
+  --jade: #1f8d67;
+  --ivory: #fbfaf6;
+  --paper: #f5f1e9;
+  --gold: #c9a35b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--ivory);
+  color: #1d2320;
+  font-family:
+    Inter, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", Arial,
+    sans-serif;
+}
+
+::selection {
+  background: rgba(201, 163, 91, 0.32);
+}
+
+.font-display {
+  font-family: "Cormorant Garamond", "Noto Serif TC", Georgia, serif;
+}
+
+.admin-input {
+  min-height: 46px;
+  width: 100%;
+  border-radius: 999px;
+  border: 1px solid rgba(12, 43, 34, 0.15);
+  background: #fbfaf6;
+  padding: 0.7rem 1rem;
+  color: #0c2b22;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  outline: none;
+}
+
+textarea.admin-input {
+  border-radius: 0.75rem;
+}
+
+.admin-input:focus {
+  border-color: rgba(201, 163, 91, 0.7);
+  box-shadow: 0 0 0 3px rgba(201, 163, 91, 0.16);
+}
