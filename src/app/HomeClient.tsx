@@ -81,7 +81,7 @@ export default function HomeClient({ products, error }: { products: Product[]; e
 
       <section
         id="home"
-        className="relative grid min-h-[92svh] items-end overflow-hidden px-5 pb-48 pt-32 text-white md:px-12 lg:px-20"
+        className="relative grid min-h-[100svh] items-start overflow-hidden px-5 pb-10 pt-28 text-white md:min-h-[92svh] md:items-end md:px-12 md:pb-48 md:pt-32 lg:px-20"
       >
         <Image
           src="/images/hero-jadeite.png"
@@ -96,13 +96,13 @@ export default function HomeClient({ products, error }: { products: Product[]; e
           <p className="mb-4 text-xs font-bold uppercase tracking-[.22em] text-[#c9a35b]">
             Private Collection For Sale
           </p>
-          <h1 className="max-w-4xl font-display text-5xl font-medium leading-[.98] md:text-7xl lg:text-8xl">
+          <h1 className="max-w-4xl font-display text-4xl font-medium leading-[1.05] sm:text-5xl md:text-7xl md:leading-[.98] lg:text-8xl">
             東源翡藏，私人翡翠收藏釋出。
           </h1>
-          <p className="mt-7 max-w-2xl text-base leading-8 text-white/78 md:text-xl">
+          <p className="mt-6 max-w-2xl text-base leading-8 text-white/78 md:mt-7 md:text-xl">
             展示並販售精選私人蒐藏，從手鐲、蛋面、雕件到吊墜，以清楚規格、證書資訊與收藏故事協助藏家安心賞藏與洽購。
           </p>
-          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row md:mt-10">
             <Link href="#collection" className="rounded-full bg-[#c9a35b] px-7 py-3 text-center text-sm font-bold text-[#06110d]">
               查看可售藏品
             </Link>
@@ -111,7 +111,7 @@ export default function HomeClient({ products, error }: { products: Product[]; e
             </Link>
           </div>
         </div>
-        <div className="absolute bottom-6 right-5 z-10 grid w-[calc(100%-2.5rem)] border border-[#ead6a5]/25 bg-[#06110d]/50 backdrop-blur-xl sm:grid-cols-3 md:right-12 md:w-[560px]">
+        <div className="relative z-10 mx-auto mt-10 grid w-full max-w-7xl border border-[#ead6a5]/25 bg-[#06110d]/50 backdrop-blur-xl sm:grid-cols-3 md:absolute md:bottom-6 md:right-12 md:mt-0 md:w-[560px] md:max-w-none">
           {[
             ["公開釋出", `${availableProducts.filter((item) => item.status === "可洽購").length}`],
             ["收藏分類", `${Math.max(categories.length - 1, 0)}`],
