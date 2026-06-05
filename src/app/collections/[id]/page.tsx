@@ -1,26 +1,31 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import type { CollectionItem } from "@/data/jade";
-import { getManagedCollections } from "@/lib/collection-store";
+import { notFound } from "next/navigation";
+import { getProductById, getProductGallery } from "@/lib/products";
 
-export default function CollectionDetailClient({ initialItem }: { initialItem: CollectionItem }) {
-  const [item, setItem] = useState(initialItem);
+type PageProps = {
+  params: Promise<{
+    id: string;
+  }>;
+};
 
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      const managed = getManagedCollections();
-      setItem(managed.find((entry) => entry.id === initialItem.id) ?? initialItem);
-    }, 0);
-    return () => window.clearTimeout(timer);
-  }, [initialItem]);
+export default async function ProductDetailPage({ params }: PageProps) {
+  const { id } = await params;
+  const { product, error } = await getProductById(id);
 
+  if (error) {
+    return <ProductUnavailable message={error} />;
+  }
+
+  if (!product) {
+    notFound();
+  }
+
+  const gallery = getProductGallery(product);
   const specs = [
-    ["種水", item.grade],
-    ["顏色", item.color],
-    ["尺寸", item.size],
-    ["重量", item.weight],
+    ["尺寸", product.size],
+    ["重量", product.weight],
+    ["種水", product.water],
+    ["顏色", product.color],
   ];
 
   return (
@@ -43,24 +48,43 @@ export default function CollectionDetailClient({ initialItem }: { initialItem: C
       </header>
 
       <section className="mx-auto grid max-w-7xl gap-10 py-12 lg:grid-cols-[.92fr_1.08fr] lg:items-center lg:py-20">
-        <div className="relative overflow-hidden rounded-lg border border-[#0c2b22]/15 bg-[#0c2b22] shadow-[0_24px_70px_rgba(3,18,13,.24)]">
-          <img src={item.image} alt={item.title} className="aspect-[1/1.08] w-full object-cover" />
+        <div className="grid gap-4">
+          <div className="relative overflow-hidden rounded-lg border border-[#0c2b22]/15 bg-[#0c2b22] shadow-[0_24px_70px_rgba(3,18,13,.24)]">
+            {product.image ? (
+              <img src={product.image} alt={product.title} className="aspect-[1/1.08] w-full object-cover" />
+            ) : (
+              <div className="grid aspect-[1/1.08] w-full place-items-center text-white/50">No image</div>
+            )}
+          </div>
+          {gallery.length > 1 ? (
+            <div className="grid grid-cols-3 gap-3">
+              {gallery.map((image) => (
+                <img
+                  key={image}
+                  src={image}
+                  alt={`${product.title} 細節照片`}
+                  className="aspect-square rounded-lg border border-[#0c2b22]/12 bg-[#0c2b22] object-cover"
+                />
+              ))}
+            </div>
+          ) : null}
         </div>
+
         <div>
           <p className="mb-3 text-xs font-bold uppercase tracking-[.2em] text-[#c9a35b]">
-            {item.category} / {item.grade}
+            {product.category} / {product.water}
           </p>
           <h1 className="font-display text-5xl font-medium leading-tight text-[#0c2b22] md:text-7xl">
-            {item.title}
+            {product.title}
           </h1>
-          <p className="mt-6 text-base leading-8 text-[#66736d] md:text-lg">{item.story}</p>
+          <p className="mt-6 text-base leading-8 text-[#66736d] md:text-lg">{product.description}</p>
           <div className="mt-8 grid gap-4 border-t border-[#0c2b22]/12 pt-6 sm:grid-cols-2">
             <div>
               <span className="text-xs font-bold uppercase tracking-[.15em] text-[#66736d]">
                 售價
               </span>
               <strong className="mt-2 block font-display text-4xl font-medium text-[#c9a35b] md:text-5xl">
-                {item.price}
+                {product.price}
               </strong>
             </div>
             <div>
@@ -68,7 +92,7 @@ export default function CollectionDetailClient({ initialItem }: { initialItem: C
                 狀態
               </span>
               <strong className="mt-3 inline-flex rounded-full border border-[#c9a35b]/45 px-4 py-2 text-sm text-[#0c2b22]">
-                {item.status}
+                {product.status}
               </strong>
             </div>
           </div>
@@ -76,8 +100,8 @@ export default function CollectionDetailClient({ initialItem }: { initialItem: C
             <Link href="/#consult" className="rounded-full bg-[#0c2b22] px-7 py-3 text-center text-sm font-bold text-white">
               預約洽購
             </Link>
-            <Link href="/admin" className="rounded-full border border-[#0c2b22]/15 px-7 py-3 text-center text-sm font-bold text-[#0c2b22]">
-              修改價格
+            <Link href="/#catalog" className="rounded-full border border-[#0c2b22]/15 px-7 py-3 text-center text-sm font-bold text-[#0c2b22]">
+              回分類目錄
             </Link>
           </div>
         </div>
@@ -92,20 +116,35 @@ export default function CollectionDetailClient({ initialItem }: { initialItem: C
                 <dt className="text-xs font-extrabold uppercase tracking-[.1em] text-[#66736d]">
                   {label}
                 </dt>
-                <dd className="mt-1 text-[#0c2b22]">{value}</dd>
+                <dd className="mt-1 text-[#0c2b22]">{value || "未提供"}</dd>
               </div>
             ))}
           </dl>
         </article>
         <article className="rounded-lg border border-[#0c2b22]/15 bg-white p-7">
           <h2 className="font-display text-3xl font-medium text-[#0c2b22]">證書資訊</h2>
-          <p className="mt-6 leading-8 text-[#66736d]">{item.certificate}</p>
+          <p className="mt-6 leading-8 text-[#66736d]">{product.certificate || "未提供"}</p>
         </article>
         <article className="rounded-lg border border-[#0c2b22]/15 bg-white p-7 lg:col-span-2">
           <h2 className="font-display text-3xl font-medium text-[#0c2b22]">收藏故事</h2>
-          <p className="mt-6 leading-8 text-[#66736d]">{item.story}</p>
+          <p className="mt-6 leading-8 text-[#66736d]">{product.story || "未提供"}</p>
         </article>
       </section>
+    </main>
+  );
+}
+
+function ProductUnavailable({ message }: { message: string }) {
+  return (
+    <main className="grid min-h-screen place-items-center bg-[#06110d] px-5 text-center text-white">
+      <div className="max-w-lg rounded-lg border border-[#ead6a5]/20 bg-white/[.06] p-8">
+        <p className="text-xs font-bold uppercase tracking-[.2em] text-[#c9a35b]">Dongyuan Jade Archive</p>
+        <h1 className="mt-4 font-display text-4xl font-medium">藏品資料</h1>
+        <p className="mt-5 leading-8 text-white/68">{message}</p>
+        <Link href="/" className="mt-8 inline-flex rounded-full bg-[#c9a35b] px-6 py-3 text-sm font-bold text-[#06110d]">
+          回到首頁
+        </Link>
+      </div>
     </main>
   );
 }

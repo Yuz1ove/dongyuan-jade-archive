@@ -1,6 +1,4 @@
-import { notFound } from "next/navigation";
-import { collections } from "@/data/jade";
-import CollectionDetailClient from "./CollectionDetailClient";
+import { redirect } from "next/navigation";
 
 type PageProps = {
   params: Promise<{
@@ -8,17 +6,7 @@ type PageProps = {
   }>;
 };
 
-export function generateStaticParams() {
-  return collections.map((item) => ({ id: item.id }));
-}
-
-export default async function CollectionDetail({ params }: PageProps) {
+export default async function LegacyCollectionDetail({ params }: PageProps) {
   const { id } = await params;
-  const item = collections.find((entry) => entry.id === id);
-
-  if (!item) {
-    notFound();
-  }
-
-  return <CollectionDetailClient initialItem={item} />;
+  redirect(`/collections/${id}`);
 }
